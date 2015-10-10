@@ -1,7 +1,5 @@
 #include "WProgram.h"
 
-// define information about our usb device
-#define USB_KEYBOARD
 #include "usb_dev.h"
 #include "usb_keyboard.h"
 #include "keydefs.h"

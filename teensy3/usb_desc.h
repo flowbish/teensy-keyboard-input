@@ -172,6 +172,35 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
   #define ENDPOINT4_CONFIG	ENDPOINT_TRANSIMIT_ONLY
   #define ENDPOINT5_CONFIG	ENDPOINT_TRANSIMIT_ONLY
 
+#elif defined(USB_KEYBOARD)
+  #define VENDOR_ID		0x16C0
+  #define PRODUCT_ID		0x0482
+  // to generate these dumb char array things, use this helpful python function:
+  // def string_to_char_array(s):
+  //      return "{{{}}}".format(','.join(map(lambda c: "'{}'".format(c), s)))
+  #define MANUFACTURER_NAME	{'f','l','o','w','b','i','s','h'}
+  #define MANUFACTURER_NAME_LEN	8
+  #define PRODUCT_NAME		{'b','i','s','h','b','o','a','r','d',' ','c','h','o','r','d','e','d',' ','k','e','y','b','o','a','r','d'}
+  #define PRODUCT_NAME_LEN	26
+  #define EP0_SIZE		64
+  #define NUM_ENDPOINTS         3
+  #define NUM_USB_BUFFERS	24
+  #define NUM_INTERFACE		4
+  #define SEREMU_INTERFACE      1	// Serial emulation
+  #define SEREMU_TX_ENDPOINT    1
+  #define SEREMU_TX_SIZE        64
+  #define SEREMU_TX_INTERVAL    1
+  #define SEREMU_RX_ENDPOINT    2
+  #define SEREMU_RX_SIZE        32
+  #define SEREMU_RX_INTERVAL    2
+  #define KEYBOARD_INTERFACE    0	// Keyboard
+  #define KEYBOARD_ENDPOINT     3
+  #define KEYBOARD_SIZE         8
+  #define KEYBOARD_INTERVAL     1
+  #define ENDPOINT1_CONFIG	ENDPOINT_TRANSIMIT_ONLY
+  #define ENDPOINT2_CONFIG	ENDPOINT_RECEIVE_ONLY
+  #define ENDPOINT3_CONFIG	ENDPOINT_TRANSIMIT_ONLY
+
 #elif defined(USB_SERIAL_HID)
   #define VENDOR_ID		0x16C0
   #define PRODUCT_ID		0x0487

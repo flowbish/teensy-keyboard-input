@@ -12,7 +12,7 @@ TEENSY_CORE_SPEED = 48000000
 #ARDUINO = 10600
 
 # configurable options
-OPTIONS = -DLAYOUT_US_ENGLISH -DUSB_HID
+OPTIONS = -DLAYOUT_US_ENGLISH -DUSB_KEYBOARD
 
 # directory to build in
 BUILDDIR = $(abspath $(CURDIR)/build)
