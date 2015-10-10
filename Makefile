@@ -120,10 +120,12 @@ build: $(TARGET).elf
 hex: $(TARGET).hex
 
 post_compile: $(TARGET).hex
-	@$(abspath $(TOOLSPATH))/teensy_post_compile -file="$(basename $<)" -path=$(CURDIR) -tools="$(abspath $(TOOLSPATH))"
+#	@$(abspath $(TOOLSPATH))/teensy_post_compile -file="$(basename $<)" -path=$(CURDIR) -tools="$(abspath $(TOOLSPATH))"
+#	make this obey the currently defined mcu
+	teensy_loader_cli --mcu=mk20dx128 -w $<
 
 reboot:
-	@-$(abspath $(TOOLSPATH))/teensy_reboot
+#	@-$(abspath $(TOOLSPATH))/teensy_reboot
 
 upload: post_compile reboot
 
