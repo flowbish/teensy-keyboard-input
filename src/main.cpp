@@ -3,31 +3,42 @@
 #include "usb_dev.h"
 #include "usb_keyboard.h"
 #include "keydefs.h"
+#include "chording.h"
 
-
-#define USB_IDLE_RATE 500
-
-/**
- * Use SPI with the following pins
- * SS = PIN_10
- * SCK = PIN_13
- * MOSI = PIN_11
- * MISO = PIN_12
- */
-
+#define DEBOUNCE_TIME 3
 #define NUM_KEYS 10
 int key_inputs[NUM_KEYS] = {KEY_RELEASED};
-int key_keycodes[NUM_KEYS] = {KEY(A),
-                              KEY(S),
-                              KEY(E),
-                              KEY(T),
-                              KEY(SPACE),
-                              KEY(ENTER),
-                              KEY(N),
-                              KEY(I),
-                              KEY(O),
-                              KEY(P)};
+keyfun key_keycodes[NUM_KEYS][2] = {K(A),
+                                    K(S),
+                                    K(E),
+                                    K(T),
+                                    K(SPACE),
+                                    K(ENTER),
+                                    K(N),
+                                    K(I),
+                                    K(O),
+                                    K(P)};
 int key_pins[NUM_KEYS] = {14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+bool key_is_pressed[NUM_KEYS] = {KEY_RELEASED};
+bool key_was_pressed[NUM_KEYS] = {KEY_RELEASED};
+
+void update_keys() {
+    int i;
+    memcpy(key_was_pressed, key_is_pressed, sizeof(key_is_pressed));
+    for (i = 0; i < NUM_KEYS; i++) {
+        key_is_pressed[i] = digitalRead(key_pins[i]);
+    }
+}
+
+void key_press(int i) {
+    keyfun fun = key_keycodes[i][0];
+    fun();
+}
+
+void key_release(int i) {
+    keyfun fun = key_keycodes[i][1];
+    fun();
+}
 
 extern "C" int main(void) {
     int i;
@@ -40,27 +51,19 @@ extern "C" int main(void) {
     
     usb_init();
 	while (1) {
-        int current_inputs[NUM_KEYS] = {KEY_PRESSED};
+        update_keys();
 
-        // Read the status of each switch connected (digital 0 means pressed).
         for (i = 0; i < NUM_KEYS; i++) {
-            current_inputs[i] = digitalRead(key_pins[i]);
-
-            // test for falling edge (press)
-            // TODO: debounce
-            if (current_inputs[i] == KEY_PRESSED && key_inputs[i] == KEY_RELEASED) {
-                usb_keyboard_press_keycode(key_keycodes[i]);
+            if (key_is_pressed[i] && !key_was_pressed[i]) {
+                key_press(i);
             }
-
-            // test for rising edge (release)
-            // TODO: debounce
-            else if (current_inputs[i] == KEY_RELEASED && key_inputs[i] == KEY_PRESSED) {
-                usb_keyboard_release_keycode(key_keycodes[i]);
+            else if (key_was_pressed[i] && key_is_pressed[i]) {
+                key_release(i);
             }
-
-            key_inputs[i] = current_inputs[i];
         }
-        delayMicroseconds(3000);
+
+        usb_keyboard_send();
+        delay(DEBOUNCE_TIME);
 	}
 }
 
